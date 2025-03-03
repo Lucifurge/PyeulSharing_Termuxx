@@ -75,19 +75,18 @@ def load_cookies():
     console.print("[yellow]Paste your access tokens (one per line, then press Enter when done):[/yellow]")
     tokens = input().strip().split()  # Enter all tokens in one line, separated by spaces
     return [token for token in tokens if token.startswith("EAAAA")]
-
-def share_post(cookie, share_url, share_count):
+def share_post(cookie, share_url, share_count, interval=0.1):
     url = "https://graph.facebook.com/me/feed"
     headers = {"User-Agent": "Mozilla/5.0"}
     data = {
         "link": share_url,
-        "privacy": '{"value":"SELF"}',
-        "no_story": "true",
-        "published": "false",
+        "privacy": '{"value":"SELF"}',  # Ensuring only you can see the post
+        "no_story": "true",  # Prevents showing in your profile
+        "published": "false",  # Keeps it hidden
         "access_token": cookie
     }
     
-    success_count = 0  # Initialize counter
+    success_count = 0
     for i in range(1, share_count * 2 + 1):
         try:
             response = requests.post(url, json=data, headers=headers)
@@ -125,7 +124,7 @@ def spam_share_single():
         return
     share_url = input("Enter post link: ").strip()
     share_count = int(input("Enter Share Count: ").strip())
-    share_post(token, share_url, share_count)
+    share_post(token, share_url, share_count, interval=0.1)
     console.print("[green]Finished sharing post.")
     input("\nPress Enter to return to menu...")
 
